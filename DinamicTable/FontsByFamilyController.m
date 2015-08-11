@@ -11,17 +11,17 @@
 
 @interface FontsByFamilyController ()
 
-@property (nonatomic, strong) NSArray *fontNames;
+@property (nonatomic, strong) NSArray *cities;
 
 @end
 
 @implementation FontsByFamilyController
 
-- (NSArray *)fontNames {
-    if (!_fontNames) {
-        _fontNames = [UIFont fontNamesForFamilyName:self.familyName];
+- (NSArray *)cities {
+    if (!_cities) {
+        _cities = [[NSArray alloc] init];
     }
-    return _fontNames;
+    return _cities;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -29,21 +29,29 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.fontNames count];
+    
+    return [self.cities count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     static NSString *cellIdentifier = @"Font Cell Identifier";
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    cell.textLabel.text = [self.fontNames objectAtIndex:indexPath.row];
+    
+    cell.textLabel.text = [self.cities objectAtIndex:indexPath.row];
+    
    // cell.imageView
     return cell;
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-    NSString *fontName = [self.fontNames objectAtIndex:indexPath.row];
-    ((TextViewController *)segue.destinationViewController).font = [UIFont fontWithName:fontName size:21];
-}
+//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+//    
+//    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
+//    
+//    NSString *city = [self.cities objectAtIndex:indexPath.row];
+//    
+//    ((TextViewController *)segue.destinationViewController).font = [UIFont fontWithName:fontName size:21];
+//}
 
 @end

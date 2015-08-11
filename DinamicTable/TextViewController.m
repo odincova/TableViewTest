@@ -8,6 +8,20 @@
 
 #import "TextViewController.h"
 
+@interface TextViewController ()
+@property (weak, nonatomic) IBOutlet UITextView *textView;
+@end
+
 @implementation TextViewController
+
+- (void)setFont:(UIFont *)font {
+    _font = font;
+    _textView.font = font;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    _textView.font = _font;
+}
 
 @end

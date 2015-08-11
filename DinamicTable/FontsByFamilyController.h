@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface FontsByFamilyController : UITableViewController
-@property (nonatomic, copy) NSString *familyName;
+@property (nonatomic, copy) NSString *city;
 @end
