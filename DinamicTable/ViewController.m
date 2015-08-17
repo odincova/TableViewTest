@@ -11,6 +11,7 @@
 #import "AFNetworking.h"
 #import "AFHTTPRequestOperation.h"
 
+
 @interface TextFieldCell : UITableViewCell
 
 //@property (nonatomic, weak) IBOutlet UITextField *textField;
@@ -41,12 +42,12 @@
 }
 
 
-- (void)setCountries:(NSArray *)countries {
-    NSArray *sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-    _countries = [countries sortedArrayUsingDescriptors:sortDescriptors];
-    
-    [self.tableView reloadData];
-}
+//- (void)setCountries:(NSArray *)countries {
+//    NSArray *sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
+//    _countries = [countries sortedArrayUsingDescriptors:sortDescriptors];
+//    NSLog(@" array with %@", countries);
+//    [self.tableView reloadData];
+//}
 
 
 - (IBAction)refresh:(UIRefreshControl *)sender {
@@ -64,93 +65,82 @@
     }];
 }
 
+
+
 - (void)downloadListOfCountries:(void(^)(id result))completion {
     
     NSURL *url = [NSURL URLWithString:@"https://restcountries.eu/rest/v1/all"];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+     __weak typeof(request) wRequest = request;
     
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:wRequest];
     
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    op.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         
-        NSLog(@"JSON: %@", responseObject);
+      
+            NSLog(@"JSON: %@", responseObject);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
         NSLog(@"Error: %@", error);
         
     }];
-    [[NSOperationQueue mainQueue] addOperation:operation];
+    [[NSOperationQueue mainQueue] addOperation:op];
+
 
 }
 
 
-//- (UITableViewCell *)cellForSubview:(UIView *)view {
-//    if (!view.superview)
-//        return nil;
-//    
-//    while (![view.superview isKindOfClass:[UITableViewCell class]]) {
-//        return [self cellForSubview:view.superview];
-//    }
-//    return (UITableViewCell *)view.superview;
-//}
-
-
-//- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-//    
-//    [textField resignFirstResponder];
-//    
-//    UITableViewCell *cell = [self cellForSubview:textField];
-//    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-//    
-//    if (indexPath.row + 1 < self.familyNames.count) {
-//        NSIndexPath *nextIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
-//        TextFieldCell *nextCell = (TextFieldCell *)[self.tableView cellForRowAtIndexPath:nextIndexPath];
-//        [nextCell.textField becomeFirstResponder];
-//    }
-//    
-//    return YES;
-//}
 
 #pragma mark - UITableViewDataSource<NSObject>
 
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    
     return 1;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    
+   
     return self.countries.count;
+    
+    
 }
+
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
+    UITableViewCell *cell;
+    
+    if (indexPath.section == 0) {
+        
     static NSString *identifier = @"Default Cell Identidier ";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     
-    id country = [self.countries objectAtIndex:indexPath.row];
+    id countryObject = self.countries[indexPath.row];
     
-    cell.textLabel.text = country[@"name"];
+    cell.textLabel.text = countryObject[@"name"];
    
+    }
     
     return cell;
 
 }
-//
-//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-//    
-//    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-//    
-//    NSString *city = [self.countries objectAtIndex:indexPath.row];
-//    
-//    ((FontsByFamilyController *)segue.destinationViewController).city = city;
-//}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
+    
+    NSString *city = [self.countries objectAtIndex:indexPath.row];
+    
+    ((FontsByFamilyController *)segue.destinationViewController).city = city;
+}
 
 
 @end
